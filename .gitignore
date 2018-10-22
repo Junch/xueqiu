@@ -5,3 +5,4 @@ data.cfg
 /.idea
 *.txt
 cookies
+config.py

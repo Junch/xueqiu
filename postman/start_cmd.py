@@ -5,5 +5,5 @@ __author__ = 'Rocky'
 http://30daydo.com
 Contact: weigesysu@qq.com
 '''
-cmd='scrapy crawl xueqiu -s LOG_FILE=scrapy.log'
+cmd='scrapy crawl xueqiu'
 cmdline.execute(cmd.split())

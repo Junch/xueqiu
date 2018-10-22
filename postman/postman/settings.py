@@ -13,10 +13,10 @@ BOT_NAME = 'postman'
 
 SPIDER_MODULES = ['postman.spiders']
 NEWSPIDER_MODULE = 'postman.spiders'
-MONGODB_SERVER = 'raspberrypi'
+MONGODB_SERVER = 'localhost'
 MONGODB_PORT = 27017
 MONGODB_DB = 'xueqiu'
-MONGODB_COLLECTION = 'ceo'
+MONGODB_COLLECTION = '老布'
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 # USER_AGENT = 'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3325.162 Safari/537.36'
