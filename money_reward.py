@@ -8,9 +8,13 @@ import time
 import datetime
 import pymongo
 import config
-db = pymongo.MongoClient('10.18.6.26', 27001)
-doc = db['db_parker']['xueqiu_reward1']
-failed_doc = db['db_parker']['xueqiu_reward_status1']
+client = pymongo.MongoClient('10.18.6.26', 27001)
+db = client['xueqiu']
+failed_doc = db['reward_failed']
+
+# 根据不同用户修改
+ZHUAN_LAN='zhuanlan_元卫南'
+user_id='2227798650'
 
 session = requests.Session()
 def get_proxy(retry=10):
@@ -48,19 +52,13 @@ def get_content(url):
         "User-Agent": "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.99 Safari/537.36",
         "X-Requested-With": "XMLHttpRequest"
     }
-    try:
-        proxy = get_proxy()
-    except Exception as e:
-        print(e)
-        proxy = get_proxy()
+
 
     try:
         r = session.get(url=url, headers=headers,proxies=proxy,timeout=10)
     except Exception as e:
         print(e)
-        proxy = get_proxy()
-        r = session.get(url=url, headers=headers,proxies=proxy,timeout=10)
-
+        r = None
     return r
 
 
@@ -114,16 +112,15 @@ def parse_content(post_id):
         failed_doc.insert({'post_id':post_id,'status':-1})
 
 
+# 获取所有的文章
+def get_all_article():
 
-def get_all_page_id(user_id):
-    doc = db['db_parker']['xueqiu_zhuanglan']
-
-    get_page_url = 'https://xueqiu.com/statuses/original/timeline.json?user_id={}&page=1'.format(user_id)
+    get_page_url = 'https://xueqiu.com/statuses/original/timeline.json?user_id={}&page={}'.format(user_id,1)
     r = get_content(get_page_url)
     max_page = int(r.json().get('maxPage'))
 
     for i in range(1, max_page + 1):
-        url = 'https://xueqiu.com/statuses/original/timeline.json?user_id=2227798650&page={}'.format(i)
+        url = get_page_url.format(i)
         r = get_content(url)
         js_data = r.json()
         ret = []
@@ -141,8 +138,8 @@ def get_all_page_id(user_id):
                 '%Y-%m-%d %H:%M:%S')
 
             ret.append(d)
-        print(d)
-        doc.insert_many(ret)
+
+        db[ZHUAN_LAN].insert_many(ret)
 
 def loop_page_id():
     doc = db['db_parker']['xueqiu_zhuanglan']
@@ -161,9 +158,7 @@ def loop_page_id():
         else:
             parse_content(article_id)
 
-
+get_all_article()
 # post_id = '115496801'
 # parse_content(post_id)
-# user_id='2227798650'
-# get_all_page_id(user_id)
-loop_page_id()
+# loop_page_id()
