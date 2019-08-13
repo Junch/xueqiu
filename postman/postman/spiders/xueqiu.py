@@ -2,12 +2,11 @@
 import datetime
 import scrapy
 import json
-from postman.items import PostmanItem
+from postman.items import PostmanItem,FullItem
 
 
 class XueqiuSpider(scrapy.Spider):
     name = 'xueqiu'
-    allowed_domains = ['xueqiu.com']
 
     def __init__(self, *args, **kwargs):
         super(XueqiuSpider, self).__init__(*args, **kwargs)
@@ -17,7 +16,7 @@ class XueqiuSpider(scrapy.Spider):
             'X-Requested-With': ' XMLHttpRequest', 'Host': ' xueqiu.com', 'Accept': ' */*',
             'User-Agent': ' Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3325.162 Safari/537.36',
             'Connection': ' keep-alive',
-            'Pragma': ' no-cache', 'Cache-Control': ' no-cache', 'Referer': ' https://xueqiu.com/u/1955602780'
+            'Pragma': ' no-cache', 'Cache-Control': ' no-cache', 'Referer': ' https://xueqiu.com/u/6146070786'
         }
 
         self.cookies = {
@@ -39,32 +38,51 @@ class XueqiuSpider(scrapy.Spider):
             "Hm_lpvt_1db88642e346389874251b5a1eded6e3": "1565700661",
         }
 
+        self.base_url = 'https://xueqiu.com/v4/statuses/user_timeline.json?page={}&user_id={}'
+        self.userid = 6146070786
+        self.maxPage = 1172
     def start_requests(self):
 
-        userid = 6146070786
-        maxPage = 1172
-
-        base_url = 'https://xueqiu.com/v4/statuses/user_timeline.json?page={}&user_id={}'
-
-        for pn in range(1, maxPage + 1):
-            url = base_url.format(pn, userid)
-            yield scrapy.Request(url, cookies=self.cookies, headers=self.headers)
+        yield scrapy.Request(self.base_url.format(1,self.userid), cookies=self.cookies, headers=self.headers,callback=self.parse_total_item,
+                             meta={'pn':1}
+                             )
 
     def parse_total_item(self,response):
+        pn = response.meta['pn']
+
         content = json.loads(response.body_as_unicode())
         tweets = content.get('statuses', None)
+        print('current page {}'.format(pn))
         if tweets is None:
-            print('tweet is empty')
+            print('tweet is empty, current pn is {}'.format(pn))
             return
 
+
         for tweet in tweets:
-            item = PostmanItem()
-            created_at = tweet['created_at']
-            created_at=datetime.datetime.fromtimestamp(int(created_at) / 1000)
+            item = FullItem()
+            created_at = tweet.get('created_at')
+            edited_at = tweet.get('edited_at')
+            try:
+                created_at=datetime.datetime.fromtimestamp(int(created_at) / 1000)
+            except Exception as e:
+                print(created_at)
+            try:
+                edited_at=datetime.datetime.fromtimestamp(int(edited_at) / 1000)
+
+            except Exception as e:
+                print(edited_at)
+
+
             tweet['created_at']=created_at
+            tweet['edited_at']=edited_at
+            tweet['crawltime']=datetime.datetime.now()
             item['DATA'] = tweet
             yield item
 
+        if pn<self.maxPage:
+            pn+=1
+            yield scrapy.Request(self.base_url.format(pn,self.userid), cookies=self.cookies, headers=self.headers, callback=self.parse_total_item,
+                                 meta={'pn':pn})
 
 
     def parse(self, response):

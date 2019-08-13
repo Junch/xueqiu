@@ -23,6 +23,9 @@ class PostmanPipeline(object):
 
             return item
         elif isinstance(item,FullItem):
+            insert_item = dict(item)
+            it = insert_item.get('DATA')
 
+            self.collection.insert(it)
 
             return item

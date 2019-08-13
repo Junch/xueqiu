@@ -9,5 +9,6 @@ http://30daydo.com
 Contact: weigesysu@qq.com
 '''
 
-cmd='scrapy crawl xueqiu -s LOG_FILE={}.log'.format(datetime.datetime.now().strftime('%Y-%m-%d'))
+# cmd='scrapy crawl xueqiu -s LOG_FILE={}.log'.format(datetime.datetime.now().strftime('%Y-%m-%d'))
+cmd='scrapy crawl xueqiu'
 cmdline.execute(cmd.split())
