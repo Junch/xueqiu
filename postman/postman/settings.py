@@ -16,7 +16,7 @@ NEWSPIDER_MODULE = 'postman.spiders'
 MONGODB_SERVER = 'localhost'
 MONGODB_PORT = 27017
 MONGODB_DB = 'xueqiu'
-MONGODB_COLLECTION = '老布'
+MONGODB_COLLECTION = '释老毛'
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 # USER_AGENT = 'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3325.162 Safari/537.36'
@@ -67,9 +67,9 @@ ROBOTSTXT_OBEY = False
 
 # Configure item pipelines
 # See http://scrapy.readthedocs.org/en/latest/topics/item-pipeline.html
-ITEM_PIPELINES = {
-   'postman.pipelines.PostmanPipeline': 300,
-}
+# ITEM_PIPELINES = {
+#    'postman.pipelines.PostmanPipeline': 300,
+# }
 
 # Enable and configure the AutoThrottle extension (disabled by default)
 # See http://doc.scrapy.org/en/latest/topics/autothrottle.html

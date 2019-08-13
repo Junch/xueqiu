@@ -9,7 +9,9 @@ class XueqiuSpider(scrapy.Spider):
     name = 'xueqiu'
     allowed_domains = ['xueqiu.com']
 
-    def __init__(self):
+    def __init__(self, *args, **kwargs):
+        super(XueqiuSpider, self).__init__(*args, **kwargs)
+
         self.headers = {
             'Accept-Language': ' zh-CN,zh;q=0.9', 'Accept-Encoding': ' gzip, deflate, br',
             'X-Requested-With': ' XMLHttpRequest', 'Host': ' xueqiu.com', 'Accept': ' */*',
@@ -19,38 +21,51 @@ class XueqiuSpider(scrapy.Spider):
         }
 
         self.cookies = {
-            "aliyungf_tc": "AQAAAK8wUQdqBAIAOnFoykG99MSX8UP2",
-            "Hm_lvt_1db88642e346389874251b5a1eded6e3": "1531100937",
-            "_ga": "GA1.2.1318479403.1531100939",
-            "_gid": "GA1.2.827644379.1531100939",
-            "device_id": "45dc0a51a26fc3078e5d8636d5141178",
+            "_ga": "GA1.2.8758030.1510556188",
+            "s": "ec11hzadsn",
+            "device_id": "5f39ce5780ab1a6a35cc9507efd53276",
+            "__utmz": "1.1543137928.193.8.utmcsr",
+            "bid": "a8ec0ec01035c8be5606c595aed718d4_jpb9qusd",
+            "__utma": "1.8758030.1510556188.1559486551.1564417180.204",
+            "aliyungf_tc": "AQAAAMMpax+EOgAADCAmG/8JTZvB5val",
+            "Hm_lvt_1db88642e346389874251b5a1eded6e3": "1564672543,1564754874,1565412065,1565700484",
             "remember": "1",
-            "remember.sig": "K4F3faYzmVuqC0iXIERCQf55g2Y",
-            "xq_a_token": "3232d00d27df616b7be3fcb80531e32bb869b5a2",
-            "xq_a_token.sig": "H2dYVga9uaEqSUsGhGf0L2hPDW8",
-            "xq_r_token": "af52839df2ce017e2bcb613ad3112419ca5043c7",
-            "xq_r_token.sig": "EWpQ-vPxGAHzmvLSp_GdhTlMHSI",
+            "xq_a_token": "7dc8e0cc8c22a73f3d7afb92e78bced74e93b0b0",
+            "xqat": "7dc8e0cc8c22a73f3d7afb92e78bced74e93b0b0",
+            "xq_r_token": "a57b481f7467e3b2b6f0a36e98df642ac4cf6c37",
             "xq_is_login": "1",
-            "xq_is_login.sig": "J3LxgPVPUzbBg3Kee_PquUfih7Q",
-            "u": "1733473480",
-            "u.sig": "2sMTnVmBVOASyCZs6lbVBQ6Zfgs",
-            "s": "dr1846gec1",
-            "bid": "a8ec0ec01035c8be5606c595aed718d4_jjdm48re",
-            "Hm_lpvt_1db88642e346389874251b5a1eded6e3": "1531101192",
-            "_gat_gtag_UA_16079156_4": "1",
-            "snbim_minify": "true"
+            "u": "5633284888",
+            "snbim_minify": "true",
+            "Hm_lpvt_1db88642e346389874251b5a1eded6e3": "1565700661",
         }
 
     def start_requests(self):
-        count = 20
-        # userid = 9887656769
-        userid = 2431057144
-        # maxPage = 2
-        maxPage = 856
+
+        userid = 6146070786
+        maxPage = 1172
+
         base_url = 'https://xueqiu.com/v4/statuses/user_timeline.json?page={}&user_id={}'
+
         for pn in range(1, maxPage + 1):
             url = base_url.format(pn, userid)
             yield scrapy.Request(url, cookies=self.cookies, headers=self.headers)
+
+    def parse_total_item(self,response):
+        content = json.loads(response.body_as_unicode())
+        tweets = content.get('statuses', None)
+        if tweets is None:
+            print('tweet is empty')
+            return
+
+        for tweet in tweets:
+            item = PostmanItem()
+            created_at = tweet['created_at']
+            created_at=datetime.datetime.fromtimestamp(int(created_at) / 1000)
+            tweet['created_at']=created_at
+            item['DATA'] = tweet
+            yield item
+
+
 
     def parse(self, response):
         content = json.loads(response.body_as_unicode())

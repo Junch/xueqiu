@@ -31,3 +31,6 @@ class PostmanItem(scrapy.Item):
     retweeted_status = scrapy.Field()
     # source = scrapy.Field()
     # source = scrapy.Field()
+
+class FullItem(scrapy.Item):
+    DATA = scrapy.Field()

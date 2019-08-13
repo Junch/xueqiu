@@ -1,4 +1,4 @@
-*.pyc
+﻿*.pyc
 .DS_Store
 /data
 data.cfg
@@ -6,4 +6,5 @@ data.cfg
 *.txt
 cookies
 config.py
+.idea/
 高收益组合达人之壹梦三十年
