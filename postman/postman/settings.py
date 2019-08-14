@@ -16,7 +16,7 @@ NEWSPIDER_MODULE = 'postman.spiders'
 MONGODB_SERVER = '10.18.6.46'
 MONGODB_PORT = 27001
 MONGODB_DB = 'xueqiu'
-MONGODB_COLLECTION = '释老毛'
+MONGODB_COLLECTION = '梁红'
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 # USER_AGENT = 'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3325.162 Safari/537.36'

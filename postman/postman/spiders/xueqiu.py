@@ -39,8 +39,8 @@ class XueqiuSpider(scrapy.Spider):
         }
 
         self.base_url = 'https://xueqiu.com/v4/statuses/user_timeline.json?page={}&user_id={}'
-        self.userid = 6146070786
-        self.maxPage = 1172
+        self.userid = 9887656769
+        self.maxPage = 378
     def start_requests(self):
 
         yield scrapy.Request(self.base_url.format(1,self.userid), cookies=self.cookies, headers=self.headers,callback=self.parse_total_item,
