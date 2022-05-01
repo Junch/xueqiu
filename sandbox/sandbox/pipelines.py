@@ -18,7 +18,7 @@ class MongoPipeline(object):
         self.check_exists()
 
     def check_exists(self):
-        if self.doc.count()>0:
+        if self.doc.count_documents({})>0:
             # 清除数据
             self.doc.drop()
     def mongo(self):
@@ -40,7 +40,7 @@ class MongoPipeline(object):
         if self.filter(item):
             insert_item = dict(item)
             insert_item['crawltime']=datetime.datetime.now()
-            self.doc.insert(insert_item)
+            self.doc.insert_one(insert_item)
             return item
         else:
             raise DropItem(item)

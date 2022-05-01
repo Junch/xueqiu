@@ -6,7 +6,6 @@
 # https://doc.scrapy.org/en/latest/topics/spider-middleware.html
 import requests
 from scrapy import signals
-import redis
 from sandbox import config
 from sandbox.random_ua import random_useragent
 
